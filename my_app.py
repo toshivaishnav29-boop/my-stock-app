@@ -18,10 +18,11 @@ try:
         current_price = data['Close'].iloc[-1]
         prev_close = data['Close'].iloc[-2]
         change = current_price - prev_close
-        
         # Dashboard Cards
+        
         col1, col2 = st.columns(2)
-        col1.metric(label="Nifty 50 Price", value=f"₹{current_price:,.2f}", delta=f"{change:.2f}")
+        col1.metric(label="Nifty 50 Price", value=f"INR {float(current_price):.2f}", delta=f"{float(change):.2f}")
+        
         col2.metric(label="Market Status", value="Weekend (Closed)")
 
         # Chart dikhana
