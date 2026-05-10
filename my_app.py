@@ -2,38 +2,32 @@ import streamlit as st
 import yfinance as yf
 import pandas as pd
 
-# Page setting (Isse app mobile par acchi dikhegi)
 st.set_page_config(page_title="Nifty Live", layout="centered")
-
 st.title("📈 Nifty 50 Live Tracker")
 st.write("Raipur Diagnostic Lab Tech - Stock Monitor")
 
-# Nifty data download (5 days taaki weekend par bhi dikhe)
 ticker = "^NSEI"
 try:
-    data = yf.download(ticker, period="5d", interval="15m")
-
-    if not data.empty:
-        # Latest Price nikalna
-        current_price = data['Close'].iloc[-1]
-        prev_close = data['Close'].iloc[-2]
-        change = current_price - prev_close
-        # Dashboard Cards
+    # 5 din ka data download kar rahe hain
+    df = yf.download(ticker, period="5d", interval="15m")
+    
+    if not df.empty:
+        # Latest price aur purani price nikalna
+        current_price = float(df['Close'].iloc[-1])
+        prev_price = float(df['Close'].iloc[-2])
+        price_diff = current_price - prev_price
         
+        # Dashboard par metrics dikhana
         col1, col2 = st.columns(2)
-        col1.metric(label="Nifty 50 Price", value=f"INR {float(current_price):.2f}", delta=f"{float(change):.2f}")
-        
-        col2.metric(label="Market Status", value="Weekend (Closed)")
+        col1.metric(label="Nifty 50 Price", value=f"₹{current_price:,.2f}", delta=f"{price_diff:.2f}")
+        col2.metric(label="Market Status", value="Weekend")
 
         # Chart dikhana
         st.subheader("Market Trend (Last 5 Days)")
-        st.line_chart(data['Close'])
-        
-        st.success("Data successfully loaded!")
+        st.line_chart(df['Close'])
+        st.success("Data loaded successfully!")
     else:
-        st.warning("Yahoo Finance se data nahi mil raha. Thodi der baad try karein.")
+        st.warning("Yahoo Finance se data nahi mil raha. Kal subah market khulte hi try karein.")
 
 except Exception as e:
-    st.error(f"Error: {e}")
-
-st.info("Tip: Ye app har 15 minute mein update hoti hai.")
+    st.error("Market data processing mein deri ho rahi hai. Please thodi der baad refresh karein.")
